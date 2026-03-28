@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Triage System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 { text-align: center; margin-bottom: 10px; font-weight: 600; letter-spacing: 1px; }
+        p.subtitle { text-align: center; font-size: 0.9rem; color: #a0aec0; margin-bottom: 30px; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.85rem; margin-bottom: 8px; color: #cbd5e0; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        input, textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #4fd1c5;
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 10px rgba(79, 209, 197, 0.3);
+        }
+
+        textarea { resize: vertical; min-height: 100px; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #38b2ac, #319795);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(49, 151, 149, 0.4);
+            font-family: 'Inter', sans-serif;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(49, 151, 149, 0.6);
+            background: linear-gradient(135deg, #4fd1c5, #38b2ac);
+        }
+
+        button:active { transform: translateY(0); }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .status.success { background: rgba(72, 187, 120, 0.2); border: 1px solid rgba(72, 187, 120, 0.4); color: #9ae6b4; }
+        .status.error { background: rgba(245, 101, 101, 0.2); border: 1px solid rgba(245, 101, 101, 0.4); color: #feb2b2; }
+    </style>
+</head>
+<body>
+
+    <div class="glass-panel">
+        <h2>Support Triage</h2>
+        <p class="subtitle">Submit a ticket and our AI will assist you.</p>
+
+        <form id="ticketForm">
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" required placeholder="John Doe">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required placeholder="john@example.com">
+            </div>
+
+            <div class="form-group">
+                <label for="message">How can we help?</label>
+                <textarea id="message" required placeholder="Describe your issue..."></textarea>
+            </div>
+
+            <button type="submit" id="submitBtn">Submit Ticket</button>
+        </form>
+
+        <div id="statusMessage" class="status"></div>
+    </div>
+
+    <script>
+        document.getElementById('ticketForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const statusDiv = document.getElementById('statusMessage');
+            
+            btn.innerHTML = 'Sending...';
+            btn.disabled = true;
+            statusDiv.style.display = 'none';
+
+            const payload = {
+                customerName: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                customerMessage: document.getElementById('message').value,
+                source: 'Modern Web UI'
+            };
+
+            try {
+                const response = await fetch('/api/triage', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusDiv.className = 'status success';
+                    
+                    statusDiv.innerHTML = `<strong>Success!</strong> Your support ticket has been sent perfectly! Our team will look at it shortly.<br>Ticket Tracking ID: ${data.crmId}`;
+                    statusDiv.style.display = 'block';
+                    document.getElementById('ticketForm').reset();
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.innerHTML = `<strong>Error!</strong> ${data.error || 'Failed to submit.'}`;
+                    statusDiv.style.display = 'block';
+                }
+            } catch (err) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = `<strong>Network Error!</strong> Could not reach the server. Make sure it is running.`;
+                statusDiv.style.display = 'block';
+            } finally {
+                btn.innerHTML = 'Submit Ticket';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
