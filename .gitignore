@@ -8,3 +8,7 @@ node_modules/
 # OS junk
 .DS_Store
 Thumbs.db
+
+# Report & evidence (submitted separately)
+HW1_Report.md
+screenshots/
