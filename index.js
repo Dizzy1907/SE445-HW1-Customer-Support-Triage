@@ -2,14 +2,26 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const { google } = require('googleapis');
+const Groq = require('groq-sdk');
 const path = require('path');
+const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Sequential ticket counter — produces TKT-000001, TKT-000002, …
+// Persistent sequential ticket counter
+const COUNTER_FILE = path.join(__dirname, 'ticket_counter.txt');
 let ticketCounter = 0;
+
+// Load previous counter from file if it exists
+if (fs.existsSync(COUNTER_FILE)) {
+    const savedCounter = parseInt(fs.readFileSync(COUNTER_FILE, 'utf8'), 10);
+    if (!isNaN(savedCounter)) ticketCounter = savedCounter;
+}
+
 function generateTicketId() {
     ticketCounter += 1;
+    // Save the new number immediately so it persists
+    fs.writeFileSync(COUNTER_FILE, ticketCounter.toString(), 'utf8');
     return 'TKT-' + String(ticketCounter).padStart(6, '0');
 }
 
@@ -81,26 +93,39 @@ function processTicketData(data) {
     };
 }
 
-// Utility: AI Completion Simulation 
-// (In a real scenario, use OpenAI SDK. Mocking here to ensure the pipeline runs without a real API key for the grading process)
+// Utility: AI Completion (Real Groq API with Simulation Fallback)
 async function analyzeWithAI(message) {
-    // If you want to use real OpenAI API, replace this mock with:
-    /*
-      const { OpenAI } = require("openai");
-      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-      const completion = await openai.chat.completions.create({ ... });
-    */
-    
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const isUrgent = message.toLowerCase().includes("urgent") || message.toLowerCase().includes("broken");
-            resolve({
-                sentiment: isUrgent ? "Negative" : "Neutral",
-                urgency: isUrgent ? "High" : "Low",
-                suggestedResponse: `Hello, we have received your message regarding "${message.substring(0, 20)}...". Our team will look into this immediately.`
-            });
-        }, 1000); // Simulate API delay
-    });
+    try {
+        if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === 'YOUR_API_KEY_HERE') {
+            throw new Error("Missing or invalid API key");
+        }
+        
+        const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+        const prompt = `You are a customer support AI assistant. Analyze the following customer message and respond ONLY with a valid JSON object — no markdown, no explanation.\n\nCustomer message: "${message}"\n\nRespond with exactly this JSON structure:\n{\n  "sentiment": "Positive" | "Neutral" | "Negative",\n  "urgency": "High" | "Low",\n  "suggestedResponse": "<a short, empathetic reply for the support agent to send>"\n}`;
+
+        const chatCompletion = await groq.chat.completions.create({
+            messages: [{ role: 'user', content: prompt }],
+            model: 'llama-3.1-8b-instant',
+            temperature: 0.1,
+            response_format: { type: 'json_object' }
+        });
+
+        const text = chatCompletion.choices[0]?.message?.content || "";
+        return JSON.parse(text);
+    } catch (error) {
+        console.warn(`\n⚠️ Real AI failed (${error.message.substring(0, 50)}...). Falling back to Simulation mode...`);
+        // Fallback to Simulation so the pipeline never breaks
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const isUrgent = message.toLowerCase().includes("urgent") || message.toLowerCase().includes("broken");
+                resolve({
+                    sentiment: isUrgent ? "Negative" : "Neutral",
+                    urgency: isUrgent ? "High" : "Low",
+                    suggestedResponse: `Hello, we have received your message regarding "${message.substring(0, 20)}...". Our team will look into this immediately.`
+                });
+            }, 1000);
+        });
+    }
 }
 
 // Utility: External API (Connecting to real Google Sheets)

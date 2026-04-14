@@ -1,6 +1,7 @@
-# Secret / auth
+# Secret / auth / state
 credentials.json
 .env
+ticket_counter.txt
 
 # Dependencies
 node_modules/

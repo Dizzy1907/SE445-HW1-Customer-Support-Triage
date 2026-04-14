@@ -72,6 +72,8 @@ HW1/
 ├── index.js              ← Full 4-step pipeline logic
 ├── package.json
 ├── credentials.json      ← Google Service Account key (gitignored)
+├── .env                  ← API keys (gitignored)
+├── ticket_counter.txt    ← Local state for sequential IDs (gitignored)
 ├── public/
 │   └── index.html        ← Glassmorphism Web UI
 ├── screenshots/          ← Evidence screenshots for the report
