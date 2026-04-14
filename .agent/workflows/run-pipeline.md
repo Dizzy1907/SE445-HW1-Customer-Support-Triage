@@ -1,32 +1,30 @@
 ---
-description: Run the full 4-step triage pipeline end-to-end
+description: Run the full 4-step triage pipeline end-to-end (Robust Version)
 ---
 
 # Run Pipeline Workflow
 
-This workflow executes the full Customer Support Triage pipeline to process a support ticket through all 4 stages.
+This workflow executes the full Customer Support Triage pipeline, programmatically verifying state persistence across all 4 stages.
 
 ## Steps
 
-1. Make sure the server is running:
-```bash
-npm start
-```
+1. Start server if not running safely.
 
-2. Submit a test ticket via PowerShell to trigger the webhook:
+2. Execute the trigger payload to the Express Webhook:
 ```powershell
 Invoke-RestMethod -Uri "http://localhost:3000/api/triage" -Method POST `
   -Headers @{"Content-Type"="application/json"} `
   -Body '{"customerName":"Test User","email":"test@example.com","customerMessage":"My system is broken and it is urgent!"}'
 ```
 
-3. Verify the pipeline output includes all 4 steps:
-   - **Step 1 — Webhook Trigger:** The POST request is received by Express
-   - **Step 2 — Processing Function:** A `TKT-XXXXXX` ID is generated and data is normalized
-   - **Step 3 — External API:** The ticket is appended to Google Sheets
-   - **Step 4 — AI Completion:** Groq (Llama 3.1) analyzes sentiment and urgency
+3. Extract the generated `TKT-XXXXXX` ID from the returned JSON response.
+   - **Internal Assertion:** The Agent must track this exact ID explicitly in memory.
 
-4. Confirm the ticket appears in the live Google Sheet:
-   https://docs.google.com/spreadsheets/d/1E-9ap6-Un5IRfNPsB_Ll1GwpCBfVFp_iru5QbPsUQEk
+4. Assert the exact `TKT-XXXXXX` ID successfully passed through every pipeline phase via backend logs:
+   - **Webhook Trigger Phase:** Check log for incoming payload.
+   - **Data Processing Phase:** Check log asserting exactly `"Processing completed. Ticket ID: TKT-XXXXXX"`.
+   - **External CRM Phase:** Check log asserting exactly `"Successfully pushed to External API (CRM). ID: TKT-XXXXXX"`.
+   - **AI Phase:** Confirm AI returned valid JSON completion.
 
-5. Verify the JSON response contains `ticketId`, `sentiment`, `urgency`, and `suggestedResponse`.
+5. Visual/External Verification:
+   - Provide the user with the Google Sheets link and instruct them to verify that the specific sequence ID perfectly hit the remote database.
