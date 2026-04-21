@@ -14,11 +14,17 @@ Trigger (HTTP Webhook / Web Form)
         ↓
 processTicketData()   — assigns TKT-000001, 000002 … IDs, normalises fields
         ↓
+sendAutoReplyEmail()  — acknowledges receipt instantly (via Nodemailer)
+        ↓
 Google Sheets API     — appends ticket row via googleapis + Service Account
         ↓
 analyzeWithAI()       — returns sentiment, urgency & suggested response
         ↓
-HTTP 200 response     — returns ticketId + AI analysis to caller
+Workflow Branching    — Routes into specific Connectors based on Urgency/Sentiment
+      ↙       ↘
+  Slack/Teams    Escalation Email / General Email (via Nodemailer)
+        ↓
+HTTP 200 response     — returns ticketId, AI analysis, routing details to caller
 ```
 
 **Live Spreadsheet:** https://docs.google.com/spreadsheets/d/1E-9ap6-Un5IRfNPsB_Ll1GwpCBfVFp_iru5QbPsUQEk
@@ -29,7 +35,8 @@ HTTP 200 response     — returns ticketId + AI analysis to caller
 
 1. **Install Node.js** (v14+)
 2. Place your Google Service Account key file as `credentials.json` in the project root (this file is gitignored — never commit it)
-3. Install dependencies:
+3. Update `.env` with your `GROQ_API_KEY` and Google App Passwords for Nodemailer (`EMAIL_USER` and `EMAIL_PASS`).
+4. Install dependencies:
    ```bash
    npm install
    ```

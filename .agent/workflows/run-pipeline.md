@@ -23,8 +23,10 @@ Invoke-RestMethod -Uri "http://localhost:3000/api/triage" -Method POST `
 4. Assert the exact `TKT-XXXXXX` ID successfully passed through every pipeline phase via backend logs:
    - **Webhook Trigger Phase:** Check log for incoming payload.
    - **Data Processing Phase:** Check log asserting exactly `"Processing completed. Ticket ID: TKT-XXXXXX"`.
+   - **Auto-Reply Phase:** Check log for Nodemailer auto-reply sent to the user acknowledging the ticket.
    - **External CRM Phase:** Check log asserting exactly `"Successfully pushed to External API (CRM). ID: TKT-XXXXXX"`.
-   - **AI Phase:** Confirm AI returned valid JSON completion.
+   - **AI Phase:** Confirm AI returned valid JSON completion for Sentiment and Urgency.
+   - **Branching/Connector Phase:** Verify that Slack/Teams or Escalation/General Email Connectors fired based on the AI output logic.
 
 5. Visual/External Verification:
    - Provide the user with the Google Sheets link and instruct them to verify that the specific sequence ID perfectly hit the remote database.

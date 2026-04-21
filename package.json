@@ -4,7 +4,8 @@
   "description": "HW1 - Component Foundations: Customer Support Triage System",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "node test-pipeline.js"
   },
   "dependencies": {
     "axios": "^1.6.8",
@@ -12,6 +13,7 @@
     "express": "^4.19.2",
     "googleapis": "^171.4.0",
     "groq-sdk": "^1.1.2",
+    "nodemailer": "^8.0.5",
     "openai": "^4.33.0"
   }
 }

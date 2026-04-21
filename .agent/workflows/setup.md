@@ -18,7 +18,7 @@ npm install
 
 3. Verify environment variables safely:
    - If `.env` is missing but `.env.example` exists, automatically copy `.env.example` to `.env`.
-   - Pause and securely prompt the user to paste their Groq API key into `.env` before proceeding.
+   - Pause and securely prompt the user to paste their Groq API key, `EMAIL_USER`, and `EMAIL_PASS` (App Password) into `.env` before proceeding.
 
 4. Ensure port 3000 is safely available:
 ```powershell
