@@ -1,32 +1,36 @@
 ---
-description: Run the full 4-step triage pipeline end-to-end (Robust Version)
+description: Execute the autonomous Agentic Triage mission
 ---
 
-# Run Pipeline Workflow
+# Run Agentic Mission Workflow
 
-This workflow executes the full Customer Support Triage pipeline, programmatically verifying state persistence across all 4 stages.
+This workflow triggers the autonomous CRM_Triage_Agent, which manages its own multi-turn mission loop using Llama 3.3.
 
 ## Steps
 
-1. Start server if not running safely.
+1. Start the Antigravity Agent Runtime:
+   ```bash
+   npm start
+   ```
 
-2. Execute the trigger payload to the Express Webhook:
-```powershell
-Invoke-RestMethod -Uri "http://localhost:3000/api/triage" -Method POST `
-  -Headers @{"Content-Type"="application/json"} `
-  -Body '{"customerName":"Test User","email":"test@example.com","customerMessage":"My system is broken and it is urgent!"}'
-```
+2. Trigger the agent mission via an HTTP POST payload:
+   ```powershell
+   Invoke-RestMethod -Uri "http://localhost:3000/api/triage" -Method POST `
+     -Headers @{"Content-Type"="application/json"} `
+     -Body '{"name":"İbrahim","email":"ibrahim@example.com","message":"Production server is down and services are inaccessible. Urgent help needed!"}'
+   ```
 
-3. Extract the generated `TKT-XXXXXX` ID from the returned JSON response.
-   - **Internal Assertion:** The Agent must track this exact ID explicitly in memory.
+3. Monitor the Autonomous Reasoning Loop:
+   The agent will now engage in a multi-turn conversation with the tools. Assert that the following sequence occurs in the server logs:
+   - **Reasoning Phase:** Agent identifies the need to log the ticket and acknowledges the user.
+   - **Action 1:** `update_crm_sheet` tool called autonomously.
+   - **Action 2:** `send_auto_reply` tool called autonomously.
+   - **Action 3:** Agent analyzes urgency and calls `notify_urgent_channels`.
+   - **Finalization:** Agent provides a summary string of the completed mission.
 
-4. Assert the exact `TKT-XXXXXX` ID successfully passed through every pipeline phase via backend logs:
-   - **Webhook Trigger Phase:** Check log for incoming payload.
-   - **Data Processing Phase:** Check log asserting exactly `"Processing completed. Ticket ID: TKT-XXXXXX"`.
-   - **Auto-Reply Phase:** Check log for Nodemailer auto-reply sent to the user acknowledging the ticket.
-   - **External CRM Phase:** Check log asserting exactly `"Successfully pushed to External API (CRM). ID: TKT-XXXXXX"`.
-   - **AI Phase:** Confirm AI returned valid JSON completion for Sentiment and Urgency.
-   - **Branching/Connector Phase:** Verify that Slack/Teams or Escalation/General Email Connectors fired based on the AI output logic.
+4. Internal Verification:
+   - Confirm the returned JSON contains a `TKT-XXXXXX` ID.
+   - Confirm the `analysis` object contains Sentiment, Urgency, and a Suggested Response generated dynamically by the LLM.
 
-5. Visual/External Verification:
-   - Provide the user with the Google Sheets link and instruct them to verify that the specific sequence ID perfectly hit the remote database.
+5. External CRM Verification:
+   Verify the live entry in the [Google Sheets CRM](https://docs.google.com/spreadsheets/d/1E-9ap6-Un5IRfNPsB_Ll1GwpCBfVFp_iru5QbPsUQEk).
