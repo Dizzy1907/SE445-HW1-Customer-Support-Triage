@@ -8,7 +8,7 @@ This workflow triggers the autonomous CRM_Triage_Agent, which manages its own mu
 
 ## Steps
 
-1. Start the Antigravity Agent Runtime:
+1. Start the CRM Support Triage Runtime:
    ```bash
    npm start
    ```

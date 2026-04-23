@@ -161,7 +161,7 @@ Message:   "${ticket.message}"`;
             const routingResult = routingEntry.result || {};
 
             return {
-                message:      "Antigravity agent executed successfully.",
+                message:      "CRM agent mission completed successfully.",
                 crmId:        crmResult.id || ticket.ticketId,
                 analysis: {
                     sentiment:         routingArgs.sentiment        || "Neutral",
@@ -221,7 +221,7 @@ app.post('/api/triage', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`\n[Antigravity Runtime] Agent: ${SupportAgent.metadata.name} v${SupportAgent.metadata.version}`);
+    console.log(`\n[CRM Runtime] Agent: ${SupportAgent.metadata.name} v${SupportAgent.metadata.version}`);
     console.log(`✅ Server running at: http://localhost:${PORT}`);
     console.log(`🌐 Support Form UI:   http://localhost:${PORT}/support`);
     console.log(`🔗 Webhook Endpoint:  POST http://localhost:${PORT}/api/triage`);

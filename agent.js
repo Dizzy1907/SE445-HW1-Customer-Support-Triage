@@ -1,5 +1,5 @@
 /**
- * CRM Triage Agent — Antigravity Pure Module v3.0.0
+ * CRM Support Triage System — Autonomous Pure Module v3.0.0
  *
  * Real LLM-driven agent using Groq tool calling.
  * The LLM decides which tools to invoke — not hardcoded if/else.
@@ -8,9 +8,9 @@
 const SupportAgent = {
 
     metadata: {
-        name: "CRM_Triage_Agent",
+        name: "CRM_Support_Triage_System",
         version: "3.0.0",
-        description: "LLM-driven triage agent. Uses Groq tool calling for autonomous decisions.",
+        description: "Autonomous CRM-driven triage agent. Uses Groq tool calling for decision-making.",
         author: "SE445"
     },
 

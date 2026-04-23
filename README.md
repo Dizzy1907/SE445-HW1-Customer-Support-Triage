@@ -1,4 +1,4 @@
-# CRM Triage Agent — HW2: Agentic CRM Orchestration
+# CRM Support Triage System — HW2: Agentic CRM Orchestration
 
 **SE445 | İbrahim Ege ÇETİNKAYA | April 2026**
 
@@ -30,7 +30,7 @@ HTTP 200 response (Final Agent Summary)
 ```
 
 ### Core Components
-- **`agent.js`**: The "Brain." A pure, zero-dependency Antigravity agent module containing the Tool Registry and Task Lifecycle.
+- **`agent.js`**: The "Brain." A pure, zero-dependency autonomous agent module containing the Tool Registry and Task Lifecycle.
 - **`index.js`**: The "Runtime." Manages the multi-turn agent loop, state persistence, and dependency injection (IoC).
 - **Groq Llama 3.3**: The "Reasoning Engine." Provides high-speed, reliable tool calling and sentiment/urgency analysis.
 - **Google Sheets CRM**: The "Persistence Layer." Automatically synchronized with every processed ticket.
