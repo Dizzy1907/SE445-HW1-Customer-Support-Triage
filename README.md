@@ -1,4 +1,4 @@
-# CRM Support Triage System — HW2: Agentic CRM Orchestration
+# Antigravity CRM Agent — HW2: Autonomous Support Triage
 
 **SE445 | İbrahim Ege ÇETİNKAYA | April 2026**
 

@@ -120,8 +120,8 @@ async function runTests() {
     let failed = 0;
     const failures = [];
 
-    heading('CRM SUPPORT TRIAGE SYSTEM – INTEGRATION TEST SUITE');
-    console.log(`  ${DIM}Architecture: HTTP POST ({name, email, message}) → CRM Connector → Google Sheets${RESET}`);
+    heading('ANTIGRAVITY AGENT – INTEGRATION TEST SUITE');
+    console.log(`  ${DIM}Architecture: HTTP POST ({name, email, message}) → Antigravity Connector → Google Sheets${RESET}`);
     console.log(`  ${DIM}Endpoint:     ${API_ENDPOINT}${RESET}`);
     console.log(`  ${DIM}Sheet ID:     ${SPREADSHEET_ID}${RESET}`);
     console.log(`  ${DIM}Timestamp:    ${new Date().toISOString()}${RESET}`);
