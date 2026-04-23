@@ -1,7 +1,7 @@
 {
-  "name": "hw1-customer-support-triage",
-  "version": "1.0.0",
-  "description": "HW1 - Component Foundations: Customer Support Triage System",
+  "name": "antigravity-support-agent-hw2",
+  "version": "2.0.0",
+  "description": "SE445 HW2 - Data Input & Persistence: Antigravity CRM Agent",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
